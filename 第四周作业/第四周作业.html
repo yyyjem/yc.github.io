@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN"></html>
+<head>
+    <meta charset="UTF-8">
+    <title>高级盒模型实验室</title>
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #45b7d1;
+            --accent-color: #fdcb6e;
+        }
+
+        /* 增强容器样式 */
+        .box-model-container {
+            width: 300px;
+            margin: 40px auto;
+            padding: 20px;
+            border: 5px solid var(--primary-color);
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* 新增三维效果 */
+        .box-model-container:hover {
+            transform: translateY(-5px) rotateX(2deg) rotateY(2deg);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        /* 动态尺寸指示器 */
+        .dimension-indicator {
+            position: absolute;
+            background: rgba(255,107,107,0.9);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* 新增盒模型类型切换 */
+        .model-selector {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .model-type {
+            cursor: pointer;
+            padding: 10px 20px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        /* 新增计算器面板 */
+        .calculator-panel {
+            background: rgba(255,255,255,0.95);
+            border: 2px solid var(--accent-color);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* 动态内容区域动画 */
+        @keyframes content-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .content-area {
+            animation: content-pulse 3s ease infinite;
+            width: 200px;
+            height: 100px;
+            padding: 15px;
+            border: 3px dashed #45b7d1;
+            margin: 10px auto;
+            background: #e0ffff;
+        }
+
+        /* 盒模型可视化辅助线 */
+        .dimension-guide {
+            color: #636e72;
+            padding-left: 20px;
+            border-left: 2px solid #ff7675;
+            margin-top: 15px;
+        }
+
+        /* 交互效果 */
+        .box-model-container:hover {
+            border-color: #fdcb6e;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* 尺寸说明标注 */
+        .size-label {
+            position: relative;
+            padding: 5px 10px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 3px;
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="model-selector">
+        <div class="model-type" onclick="toggleModel('standard')">标准盒模型</div>
+        <div class="model-type" onclick="toggleModel('border-box')">怪异盒模型</div>
+        <div class="model-type" onclick="toggleModel('custom')">自定义模式</div>
+    </div>
+
+    <div class="box-model-container" id="main-container">
+        <!-- 新增动态尺寸指示器 -->
+        <div class="dimension-indicator" id="width-indicator"></div>
+        <div class="dimension-indicator" id="height-indicator"></div>
+        
+        <div class="content-area" id="dynamic-content">
+            <div class="size-label">内容区域：200x100px</div>
+            <p>实际内容尺寸 = width/height</p>
+        </div>
+        <div class="dimension-guide">
+            <p>总宽度计算：<br>
+            width(300) = margin(40*2) + border(5*2) + padding(20*2) + 内容宽度(200)</p>
+        </div>
+    </div>
+
+    <!-- 新增实时计算面板 -->
+    <div class="calculator-panel">
+        <h3>实时计算器</h3>
+        <div class="calc-row">
+            <label>Width: <input type="number" id="input-width" value="300"></label>
+            <button onclick="updateDimensions()">应用</button>
+        </div>
+        <!-- 更多输入控件... -->
+    </div>
+
+    <script>
+        // 新增三维动态跟踪
+        document.getElementById('main-container').addEventListener('mousemove', (e) => {
+            const rect = e.target.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            e.target.style.transform = `perspective(1000px) rotateX(${(y - rect.height/2)/10}deg) rotateY(${(x - rect.width/2)/10}deg)`;
+        });
+
+        // 新增模型切换功能
+        function toggleModel(type) {
+            const container = document.getElementById('main-container');
+            container.className = 'box-model-container ' + type;
+            
+            if(type === 'border-box') {
+                container.style.boxSizing = 'border-box';
+                container.style.width = '300px'; // 保持视觉一致性
+            }
+            // 其他模式处理...
+        }
+
+        // 新增实时尺寸更新
+        function updateDimensions() {
+            const newWidth = document.getElementById('input-width').value;
+            document.getElementById('main-container').style.width = `${newWidth}px`;
+            // 其他尺寸更新逻辑...
+        }
+    </script>
+</body>
+</html>
